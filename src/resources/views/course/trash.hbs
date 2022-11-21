@@ -1,0 +1,77 @@
+<div class="mt-4">
+    <div class="row">
+        {{#each courses}}
+        <div class="col-sm-6 col-lg-4">
+            <div class="card" style="width: 18rem;">
+                <a href="/course/{{this.slug}}">
+                    <img src="{{ this.image }}" class="card-img-top" alt="{{ this.name }}">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{ this.name }}</h5>
+                    <p class="card-text">{{ this.description }}</p>
+                    <a href="#" class="btn btn-primary restore-btn" data-id="{{ this._id }}">Restore</a>
+                    <a href="#" class="btn btn-primary delete-force-btn" data-bs-toggle="modal"
+                        data-bs-target="#deleteForceModal" data-id="{{ this._id }}">Delete Force</a>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        Trash is empty! <a href="/">Home!</a>
+        {{/each}}
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteForceModal" tabindex="-1" aria-labelledby="deleteForceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteForceModalLabel">Course delete</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Do you want to delete?
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnDeleteCourse" class="btn btn-secondary">Remove</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--- Delete hidden form --->
+<form method="POST" id="deleteHiddenForm"></form>
+<form method="POST" id="restoreHiddenForm"></form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var courseID;
+
+        const deleteForceModal = document.getElementById('deleteForceModal')
+        deleteForceModal.addEventListener('show.bs.modal', event => {
+            // Button that triggered the modal
+            const button = event.relatedTarget
+            // Extract info from data-* attributes
+            courseID = button.getAttribute('data-id')
+
+            const btnDeleteCourse = document.querySelector("#btnDeleteCourse");
+            btnDeleteCourse.addEventListener('click', () => {
+                const deleteHiddenForm = document.querySelector("#deleteHiddenForm");
+                deleteHiddenForm.action = `/course/${courseID}/force?_method=DELETE`;
+                deleteHiddenForm.submit();
+            })
+
+        })
+
+        const btnRestoreCourse = document.querySelectorAll(".restore-btn");
+        Array.from(btnRestoreCourse).map(btn => btn.addEventListener('click', () => {
+            const restoreHiddenForm = document.querySelector("#restoreHiddenForm");
+            courseID = btn.getAttribute('data-id')
+            console.log('courseID: ', courseID);
+            restoreHiddenForm.action = `/course/${courseID}/restore?_method=PATCH`;
+            restoreHiddenForm.submit();
+        }))
+    })
+
+</script>

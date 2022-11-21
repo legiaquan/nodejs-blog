@@ -1,0 +1,66 @@
+<div class="mt-4">
+    <div class="row">
+        <div class="col-lg-3">
+            <a href="/course/{{course._id}}/edit">Edit</a>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#removeModal" data-id="{{ course._id }}">
+                Delete
+            </a>
+        </div>
+        <div class="col-lg-9">
+            <h2>{{course.name}}</h2>
+            <p>{{course.description}}</p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{course.videoId}}"
+                title="YouTube video player" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="removeModal" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="removeModalLabel">Course remove</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Do you want to remove?
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnDeleteCourse" class="btn btn-secondary">Remove</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--- Delete hidden form --->
+<form method="POST" id="deleteHiddenForm">
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var courseID;
+
+        const removeModal = document.getElementById('removeModal')
+        removeModal.addEventListener('show.bs.modal', event => {
+            // Button that triggered the modal
+            const button = event.relatedTarget
+            // Extract info from data-* attributes
+            courseID = button.getAttribute('data-id')
+
+            const btnDeleteCourse = document.querySelector("#btnDeleteCourse");
+            const deleteHiddenForm = document.querySelector("#deleteHiddenForm");
+
+            btnDeleteCourse.onclick = function () {
+                deleteHiddenForm.action = `/course/${courseID}?_method=DELETE`;
+                deleteHiddenForm.submit();
+            }
+        })
+    })
+
+</script>
